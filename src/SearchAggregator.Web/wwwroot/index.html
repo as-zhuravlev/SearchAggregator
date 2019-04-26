@@ -1,0 +1,73 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Search Aggregator</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <h1>Search Aggregator</h1>
+    <a href="/swagger">Swagger API reference</a>
+    <form name="value" method="post">
+        Search request:<br>
+        <input type="text" id="requestTextInput" name="Request" value="Murano Software" />
+        <br>
+        <input type="button" id="searchButton" value="Search" />
+        <div>
+            <input type="checkbox" id="onlyInDatabaseCheckBox" />
+            <label for="onlyInDatabaseCheckBox">only in database</label>
+        </div>
+    </form>
+    <h5 id="result"></h5>
+    <ul id="searchResults"></ul>
+
+    <script src="js/ajax.js"></script>
+    <script>
+        document.getElementById("searchButton").onclick = function () {
+            document.getElementById("result").innerHTML = 'Waiting...';
+            var text = document.getElementById('requestTextInput').value;
+            var onlyInDb = document.getElementById('onlyInDatabaseCheckBox').checked == true;
+            ajax.get("/api/search", { request: text, onlyInDatabase: onlyInDb}, function (ret) {
+                //window.alert("|"+ret + "|");
+                searchResult = JSON.parse(ret);
+                document.getElementById("result").innerHTML = "Search Results:";
+                var list = document.getElementById("searchResults");
+                list.innerHTML = '';
+                for (var i in searchResult.UrlSearchResults) {
+                    var usr = searchResult.UrlSearchResults[i];
+                    var urli = usr.Url;
+                    var item = document.createElement("li");
+                    var h4 = document.createElement("h4");
+                    var a = document.createElement("a");
+                    a.innerHTML = urli.Title;
+                    a.setAttribute("href", urli.UrlString);
+                    h4.appendChild(a);
+                    item.appendChild(h4);
+                    var snippet = document.createElement("div");
+                    snippet.innerHTML = urli.Snippet;
+                    item.appendChild(snippet);
+                    var url = document.createElement("div");
+                    url.innerHTML = urli.UrlString;
+                    url.setAttribute("class", "green");
+                    item.appendChild(url);
+                    var seul = document.createElement("ul")
+                    for (var j in usr.UrlSearchResultSearchEngines) {
+                        usrse = usr.UrlSearchResultSearchEngines[j];
+
+                        var seil = document.createElement("li");
+                        if (usrse.IsNew) {
+                            seil.innerHTML = "NEW! " + usrse.SearchEngine.Name;
+                        } else {
+                            seil.innerHTML = usrse.SearchEngine.Name;
+                        }
+                        seul.appendChild(seil);
+                    }
+                    item.appendChild(seul);
+                    list.appendChild(item);
+                }
+            });
+
+        };
+    </script>
+</body>
+</html>

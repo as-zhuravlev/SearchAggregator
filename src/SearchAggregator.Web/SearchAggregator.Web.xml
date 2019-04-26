@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>SearchAggregator.Web</name>
+    </assembly>
+    <members>
+        <member name="M:SearchAggregator.Web.Controllers.SearchController.Get(System.String,System.Boolean)">
+            <summary>
+            Get search results from several web search services. 
+            </summary>
+            <param name="request">string for web search</param>  
+            <param name="onlyInDatabase">show only results already found</param>  
+        </member>
+    </members>
+</doc>
